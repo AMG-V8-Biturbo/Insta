@@ -15,7 +15,7 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-from Insta.views import *
+from Insta.views import HelloWorld, PostView, PostDetailView, PostCreateView, PostUpdateView, PostDeleteView, SignUpView
 
 urlpatterns = [
     path('', HelloWorld.as_view(), name='HelloWorld'),
@@ -24,4 +24,5 @@ urlpatterns = [
     path('posts/new/', PostCreateView.as_view(), name='create_post'),
     path('posts/update/<int:pk>/', PostUpdateView.as_view(), name='update_post'),
     path('posts/delete/<int:pk>/', PostDeleteView.as_view(), name='delete_post'),
+    path('auth/signup/', SignUpView.as_view(), name='signup'),
 ]
