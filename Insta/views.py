@@ -1,19 +1,31 @@
 from django.shortcuts import render
 from django.views.generic import TemplateView, ListView, DetailView
 from django.views.generic.edit import CreateView, UpdateView, DeleteView
-from Insta.models import Post
+from Insta.models import *
 from django.urls import reverse, reverse_lazy
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth.mixins import LoginRequiredMixin
 from Insta.forms import CustomUserCreationForm
+from annoying.decorators import ajax_request
 
 # Create your views here.
 class HelloWorld(TemplateView):
     template_name = 'test.html'
 
-class PostView(ListView):
+class PostView(LoginRequiredMixin, ListView):
     model = Post
-    template_name = 'index.html'
+    template_name = 'home.html'
+    login_url = 'login'
+    def get_queryset(self):
+        current_user = self.request.user
+        following = set()
+        for conn in UserConnection.objects.filter(creator=current_user).select_related('following'):
+            following.add(conn.following)
+        return Post.objects.filter(author__in=following)
+
+class UserDetailView(DetailView):
+    model = InstaUser
+    template_name = 'user_detail.html'
 
 class PostDetailView(DetailView):
     model = Post
@@ -39,3 +51,21 @@ class SignUpView(CreateView):
     template_name = 'signup.html'
     success_url = reverse_lazy('login')
     form_class = CustomUserCreationForm
+
+@ajax_request
+def addLike(request):
+    post_pk = request.POST.get('post_pk')
+    post = Post.objects.get(pk=post_pk)
+    try:
+        like = Like(post=post, user=request.user)
+        like.save()
+        result = 1
+    except Exception as e:
+        like = Like.objects.get(post=post, user=request.user)
+        like.delete()
+        result = 0
+
+    return {
+        'result': result,
+        'post_pk': post_pk
+    }
