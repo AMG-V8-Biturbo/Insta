@@ -1,9 +1,9 @@
 {% extends "base.html" %}
 {% block content %}
-<h1>Update Post</h1>
+<h1>Delete Post</h1>
 <form method="POST" action="" enctype="multipart/form-data">
     {% csrf_token %}
-    {{ form.as_p }}
-    <button type="submit">Update</button>
+    <p>Do you want to delete "{{post.title}}"</p>
+    <button type="submit">Delete</button>
 </form>
 {% endblock content %}
