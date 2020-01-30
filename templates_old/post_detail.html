@@ -7,21 +7,15 @@
 <div class="row single-post">
     <div class="single-post-card view-update {{ object.pk }}">
         <div class="header">
-            <a href="{% url 'profile' object.author.pk %}">
+            <a href="{% url 'HelloWorld'%}">
                 {% if object.author.profile_pic %}
-                    <img class="picture-circle--medium" src="http://{{ request.META.HTTP_HOST }}/{{object.author.profile_pic.url}}">
+                    <img class="picture-circle--medium" src="/{{object.author.profile_pic}}">
                 {% endif %}
                 {{ object.author.username }}
             </a>
-            <a class="edit-desktop" href="{% url 'post_update' object.pk %}">
-                &ensp; <button class="edit-profile">Edit Post</button>
-            </a>
-            <a class="edit-desktop" href="{% url 'post_delete' object.pk %}">
-                &ensp; <button class="edit-profile">Delete Post</button>
-            </a>            
         </div>
         <div class="image__wrapper">
-            <img class="card__main-image" src="http://{{ request.META.HTTP_HOST }}/{{object.image.url}}" width='1000', height='1000'>
+            <img class="card__main-image" src="/{{object.image}}" width='1000', height='1000'>
         </div>
         <div class="comments-portion">
             <div class="likes-timestamp-row">
@@ -34,7 +28,7 @@
                     {{ object.posted_on|timesince }}
                 </div>
             </div>
-            <ul class="comment-list">
+            {% comment %} <ul class="comment-list">
                 {% for comment in object.comments.all %}
                 <li class="comment-list__comment">
                     <a href="{% url 'profile' comment.user.pk %}" class="user">
@@ -43,15 +37,18 @@
                     <span class="comment">{{ comment.comment }}</span>
                 </li>
                 {% endfor %}
-            </ul>
+            </ul> {% endcomment %}
             <section class="input-row">
-                <i class="fa {% if liked %}fa-heart{% else %}fa-heart-o{% endif %} submit-like" aria-hidden="true"></i>
-                <div class="comment-input-wrapper">
+                <i class="fa {% has_user_liked_post post user %} submit-like" aria-hidden="true"></i>
+                <div class="hidden-data {{ post.pk }}" style="display: none;">
+                    <span class="post-pk">{{ post.pk }}</span>
+                </div>
+                {% comment %} <div class="comment-input-wrapper">
                     <input class="add-comment" type="text" placeholder="Add a comment...">
                 </div>
                 <div class="hidden-data {{ object.pk }}" style="display: none;">
                     <span class="post-pk">{{ object.pk }}</span>
-                </div>
+                </div> {% endcomment %}
             </section>
         </div>
     </div>
